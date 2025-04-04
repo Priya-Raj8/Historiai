@@ -3,16 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { searchWikipedia, getTopicThumbnail } from '../services/wikipediaService';
 
 const HomePage = () => {
-  const [showChatbot, setShowChatbot] = useState(false);
-  const [chatMessages, setChatMessages] = useState([
-    {
-      sender: 'bot',
-      text: 'Hello! I\'m your AI History Tutor. Ask me anything about history and I\'ll help you understand it better.'
-    }
-  ]);
-  const [userMessage, setUserMessage] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const [featuredTopics, setFeaturedTopics] = useState([]);
   const [loadingTopics, setLoadingTopics] = useState(true);
   const navigate = useNavigate();
@@ -117,75 +107,8 @@ const HomePage = () => {
     fetchFeaturedTopics();
   }, []);
 
-  const toggleChatbot = () => {
-    setShowChatbot(!showChatbot);
-  };
-
   const handleTopicClick = (topicId) => {
     navigate(`/topic/${topicId}`);
-  };
-
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!userMessage.trim()) return;
-
-    // Add user message to chat
-    setChatMessages(prev => [...prev, { sender: 'user', text: userMessage }]);
-    
-    // Simulate AI response (in a real app, this would call an AI API)
-    setTimeout(() => {
-      setChatMessages(prev => [...prev, { 
-        sender: 'bot', 
-        text: `I'd be happy to tell you about "${userMessage}". This would be a detailed response from the AI tutor about this historical topic.`
-      }]);
-    }, 1000);
-    
-    setUserMessage('');
-  };
-
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      const audioChunks = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          audioChunks.push(e.data);
-        }
-      };
-
-      mediaRecorder.onstop = async () => {
-        setIsProcessingVoice(true);
-        // Create audio blob
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        
-        // In a real app, you would send this to Whisper API for transcription
-        // For now, we'll simulate a response after a delay
-        setTimeout(() => {
-          const simulatedTranscription = "Tell me about Ancient Egypt";
-          setUserMessage(simulatedTranscription);
-          setIsProcessingVoice(false);
-        }, 1500);
-        
-        // Stop all tracks
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-
-      // Stop recording after 5 seconds
-      setTimeout(() => {
-        if (mediaRecorder.state !== 'inactive') {
-          mediaRecorder.stop();
-          setIsRecording(false);
-        }
-      }, 5000);
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-      alert('Could not access your microphone. Please check permissions.');
-    }
   };
 
   return (
@@ -319,120 +242,12 @@ const HomePage = () => {
           </button>
           <button 
             className="bg-transparent border-2 border-white text-white hover:bg-white/10 font-medium py-3 px-6 rounded-full transition-all duration-300"
-            onClick={toggleChatbot}
+            onClick={() => document.querySelector('.fixed.bottom-6.right-6').click()}
           >
             Chat with Tutor
           </button>
         </div>
       </section>
-
-      {/* Chatbot Button */}
-      <button
-        onClick={toggleChatbot}
-        className="fixed bottom-6 right-6 bg-accent-primary hover:bg-accent-primary/90 text-white rounded-full p-4 shadow-lg z-50 flex items-center"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-        </svg>
-        {showChatbot ? 'Close Tutor' : 'Chat with Tutor'}
-      </button>
-
-      {/* Chatbot Interface */}
-      {showChatbot && (
-        <div className="fixed bottom-24 right-6 w-96 h-[500px] bg-[#1E1E1E] rounded-lg shadow-xl z-50 overflow-hidden flex flex-col">
-          <div className="bg-[#2A2A2A] p-4 flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-accent-primary flex items-center justify-center mr-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-bold text-white">History Tutor</h3>
-                <p className="text-xs text-gray-400">AI-powered assistant</p>
-              </div>
-            </div>
-            <button onClick={toggleChatbot} className="text-gray-400 hover:text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          
-          <div className="flex-grow p-4 overflow-y-auto bg-[#121212]">
-            {chatMessages.map((message, index) => (
-              <div key={index} className="mb-4">
-                {message.sender === 'bot' ? (
-                  <div className="flex items-start mb-2">
-                    <div className="w-8 h-8 rounded-full bg-accent-primary flex items-center justify-center mr-2 mt-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <div className="bg-[#2A2A2A] rounded-lg p-3 max-w-[80%]">
-                      <p className="text-white">{message.text}</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-start justify-end mb-2">
-                    <div className="bg-accent-primary rounded-lg p-3 max-w-[80%]">
-                      <p className="text-white">{message.text}</p>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-[#2A2A2A] flex items-center justify-center ml-2 mt-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          
-          <div className="p-4 bg-[#2A2A2A]">
-            <form onSubmit={handleSendMessage} className="flex items-center">
-              <input
-                type="text"
-                placeholder="Ask about any historical topic..."
-                className="flex-grow p-2 rounded-l-full bg-[#3A3A3A] text-white border-none focus:outline-none focus:ring-2 focus:ring-accent-primary"
-                value={userMessage}
-                onChange={(e) => setUserMessage(e.target.value)}
-                disabled={isRecording || isProcessingVoice}
-              />
-              <button 
-                type="submit" 
-                className="bg-accent-primary text-white p-2 rounded-r-full"
-                disabled={isRecording || isProcessingVoice || !userMessage.trim()}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              </button>
-            </form>
-            <div className="flex justify-between mt-2 text-xs text-gray-400">
-              <button 
-                className={`hover:text-white transition-colors flex items-center ${isRecording || isProcessingVoice ? 'text-accent-primary animate-pulse' : ''}`}
-                onClick={startRecording}
-                disabled={isRecording || isProcessingVoice}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                </svg>
-                {isRecording ? 'Recording...' : isProcessingVoice ? 'Processing...' : 'Voice Mode'}
-              </button>
-              <button 
-                className="hover:text-white transition-colors"
-                onClick={() => alert('Language toggle will be fully implemented in Part 2!')}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                </svg>
-                Switch to Hindi
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -53,7 +53,7 @@ const Header = () => {
           {/* Logo and Title */}
           <Link to="/" className="flex items-center space-x-3">
             <span className="text-2xl font-poppins font-bold text-white">
-              <span className="text-accent-primary">AI</span> History Tutor
+              <span className="text-accent-primary">Historia</span>AI
             </span>
             <span className="hidden md:inline-block text-xs text-gray-400">
               DEVELOPED BY Priya Raj | UID: 12307363

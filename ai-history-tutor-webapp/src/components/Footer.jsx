@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold text-white mb-4">
-              <span className="text-accent-primary">AI</span> History Tutor
+              <span className="text-accent-primary">Historia</span>AI
             </h3>
             <p className="text-gray-400">
               An interactive learning platform that brings history to life through engaging
@@ -70,14 +70,6 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
-          </div>
-          
-          <div>
-            <h4 className="text-lg font-bold text-white mb-4">Language</h4>
-            <div className="flex space-x-4">
-              <button className="px-4 py-2 bg-accent-primary rounded-full text-white">English</button>
-              <button className="px-4 py-2 bg-[#2A2A2A] rounded-full text-white hover:bg-accent-primary/20 transition-colors">हिंदी</button>
-            </div>
           </div>
         </div>
         
