@@ -79,7 +79,7 @@ The application features several key UI components:
 ## Project Structure
 
 ```
-ai-history-tutor-webapp/
+historiai/
 ├── public/             # Static files
 ├── src/
 │   ├── components/     # Reusable UI components
@@ -108,8 +108,8 @@ ai-history-tutor-webapp/
 
 1. **Clone the repository**
    ```
-   git clone <repository-url>
-   cd ai-history-tutor-webapp
+   git clone https://github.com/Priya-Raj8/Historiai.git
+   cd historia
    ```
 
 2. **Install dependencies**
